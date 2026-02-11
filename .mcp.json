@@ -1,0 +1,15 @@
+{
+	"mcpServers": {
+		"sequential-thinking": {
+			"command": "npx",
+			"args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+		},
+		"context7": {
+			"type": "http",
+			"url": "https://mcp.context7.com/mcp",
+			"headers": {
+				"CONTEXT7_API_KEY": "ctx7sk-2400d4d7-e3ba-47f2-9ed7-cc1ce463c05a"
+			}
+		}
+	}
+}
