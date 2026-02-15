@@ -1,98 +1,78 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { SafeArea } from '@/components/layout';
+import { Text } from '@/components/ui/text';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useAuthStore } from '@/lib/stores/auth-store';
+import { TestIds } from '@/lib/utils/testIds';
+import { Code, Palette, Shield, Zap } from 'lucide-react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const features = [
+  {
+    icon: Zap,
+    title: 'Expo SDK 54',
+    description: 'React Native 0.81, React 19, 최신 New Architecture 기반',
+  },
+  {
+    icon: Palette,
+    title: 'React Native Reusables',
+    description: 'shadcn/ui 스타일 컴포넌트, NativeWind 다크모드 지원',
+  },
+  {
+    icon: Shield,
+    title: '인증 시스템',
+    description: '이메일 로그인/회원가입, SecureStore 토큰 관리',
+  },
+  {
+    icon: Code,
+    title: 'TypeScript Strict',
+    description: 'Zustand + React Query, 타입 안전한 API 클라이언트',
+  },
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const user = useAuthStore((s) => s.user);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  return (
+    <SafeArea edges={['top']}>
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="px-4 pb-8"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="mt-6 mb-8" testID={TestIds.home.screen}>
+          <View className="flex-row items-center gap-2 mb-1">
+            <Text variant="h3" className="text-left" testID={TestIds.home.welcomeText}>
+              안녕하세요{user?.name ? `, ${user.name}` : ''}
+            </Text>
+            <Badge variant="secondary">
+              <Text>Starter Kit</Text>
+            </Badge>
+          </View>
+          <Text variant="muted">프로덕션 레디 React Native 스타터킷</Text>
+        </View>
+
+        <View className="gap-4">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <Card key={feature.title}>
+                <CardHeader>
+                  <View className="flex-row items-center gap-3">
+                    <View className="bg-primary/10 p-2 rounded-lg">
+                      <Icon size={20} className="text-primary" />
+                    </View>
+                    <View className="flex-1">
+                      <CardTitle>{feature.title}</CardTitle>
+                      <CardDescription className="mt-1">{feature.description}</CardDescription>
+                    </View>
+                  </View>
+                </CardHeader>
+              </Card>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </SafeArea>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

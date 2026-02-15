@@ -26,11 +26,4 @@ export interface AsyncState<T> {
 /** 앱 전역 설정 */
 export interface AppConfig {
   apiBaseUrl: string;
-  supabaseUrl: string;
-  supabaseAnonKey: string;
-  admobBannerId: string;
-  admobInterstitialId: string;
-  admobRewardedId: string;
-  livekitUrl: string;
-  sentryDsn: string;
 }
