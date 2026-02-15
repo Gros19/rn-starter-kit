@@ -1,0 +1,9 @@
+# Smoke Test — Verify app launches
+---
+appId: ${APP_ID:-host.exp.Exponent}
+tags:
+  - smoke
+---
+- launchApp
+- waitForAnimationToEnd
+- takeScreenshot: maestro/screenshots/smoke-launch

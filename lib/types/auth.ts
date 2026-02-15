@@ -1,4 +1,4 @@
-export type AuthProvider = 'apple' | 'google' | 'kakao' | 'email';
+export type AuthProvider = 'email';
 
 export interface User {
   id: string;
@@ -23,12 +23,6 @@ export interface SignUpPayload {
 export interface SignInPayload {
   email: string;
   password: string;
-}
-
-export interface SocialAuthPayload {
-  provider: AuthProvider;
-  idToken: string;
-  nonce?: string;
 }
 
 export interface AuthResponse {

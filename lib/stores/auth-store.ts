@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { AuthProvider, User } from '@/lib/types/auth';
+import type { User } from '@/lib/types/auth';
 import { tokenService } from '@/lib/auth/token-service';
 import { authApi } from '@/lib/auth/auth-api';
-import { socialAuth } from '@/lib/auth/social-auth';
 import { setTokenGetter } from '@/lib/api/client';
 import { mmkvStorage } from '@/lib/utils/storage';
 
@@ -15,9 +14,6 @@ interface AuthState {
 
   /** 앱 시작 시 토큰 확인 후 사용자 정보 복원 */
   initialize: () => Promise<void>;
-
-  /** 소셜 로그인 */
-  signInWithSocial: (provider: AuthProvider) => Promise<void>;
 
   /** 이메일 로그인 */
   signInWithEmail: (email: string, password: string) => Promise<void>;
@@ -69,35 +65,6 @@ export const useAuthStore = create<AuthState>()(
             set({ user: data, isAuthenticated: true, isInitialized: true });
           } catch {
             set({ isInitialized: true });
-          }
-        },
-
-        signInWithSocial: async (provider) => {
-          set({ isLoading: true });
-          try {
-            let payload;
-            switch (provider) {
-              case 'apple':
-                payload = await socialAuth.signInWithApple();
-                break;
-              case 'google':
-                payload = await socialAuth.signInWithGoogle();
-                break;
-              case 'kakao':
-                payload = await socialAuth.signInWithKakao();
-                break;
-              default:
-                throw new Error(`지원하지 않는 provider: ${provider}`);
-            }
-
-            const { data, error } = await authApi.socialSignIn(payload);
-            if (error || !data) throw new Error(error ?? '로그인 실패');
-
-            await tokenService.setTokens(data.tokens.accessToken, data.tokens.refreshToken);
-            setTokenGetter(() => data.tokens.accessToken);
-            set({ user: data.user, isAuthenticated: true });
-          } finally {
-            set({ isLoading: false });
           }
         },
 

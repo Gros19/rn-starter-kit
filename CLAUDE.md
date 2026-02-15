@@ -18,63 +18,43 @@ npx expo lint           # ESLint 실행
 npx tsc --noEmit        # TypeScript 타입 체크
 ```
 
-테스트 프레임워크는 아직 설정되지 않음.
+### E2E Testing (Maestro)
+- **Maestro MCP** 서버가 글로벌 설치됨 (`~/.maestro-mcp/`)
+- 플로우 위치: `maestro/flows/` (YAML)
+- TestID 레지스트리: `lib/utils/testIds.ts` — 새 UI 요소에 반드시 testID 추가
+- testID 네이밍: `<screen>-<element>-<type>` (lowercase-kebab-case)
+- 테스트 전 반드시: `maestro_boot_simulator` → `maestro_metro_status` → `maestro_detect_app_id`
+- Test-Fix 루프: 최대 5회 반복, 3회차부터 전체 컴포넌트 트리 재확인
+- 테스트 실패 시 소스코드를 수정 (테스트 수정은 테스트 버그인 경우만)
 
 ## Architecture
 
 ### Routing
 - **Expo Router v6** 파일 시스템 라우팅 (`app/` 디렉토리)
-- `app/(auth)/` — 인증 (로그인, 회원가입)
+- `app/(auth)/` — 인증 (이메일 로그인, 회원가입)
 - `app/(tabs)/` — 하단 탭 (홈, 채팅, 할 일, 프로필)
 - `app/(tabs)/chat/` — 채팅 (목록 + [roomId] 상세)
 - `app/(tabs)/todo/` — Todo (목록)
 - `app/paywall.tsx` — 구독 페이월 모달
-- `app.json`에서 `typedRoutes: true` 활성화
+- Root layout의 `unstable_settings = { anchor: '(tabs)' }`로 기본 라우트 설정
+- `typedRoutes: true` 활성화 (app.config.ts experiments)
 
 ### State Management
-- **zustand** — 전역 상태 (auth, subscription, chat, call, todo, upload, player)
-- **@tanstack/react-query** — 서버 상태 캐싱
+- **zustand** — 전역 상태 (auth, subscription, chat, call, todo, upload, player, app)
+- **@tanstack/react-query** — 서버 상태 캐싱 (stale: 5min, gc: 30min, retry: 2)
 - **react-native-mmkv** — 영속 스토리지 (zustand persist)
-- **expo-secure-store** — 토큰 보안 저장
+- **expo-secure-store** — 토큰 보안 저장 (native), MMKV fallback (web)
+
+### Key Architectural Patterns
+- **Token getter injection**: API 클라이언트에 `setTokenGetter()` 콜백 주입 — 순환 의존성 방지
+- **ApiResponse<T>**: 모든 API 호출은 `{ data, error, status }` 튜플 반환 (throw 안 함)
+- **Platform-aware storage**: SecureStore (iOS/Android) → MMKV (web) → in-memory Map (fallback)
+- **Optimistic updates**: 채팅 메시지에 temp ID 기반 낙관적 업데이트
 
 ### Theming & Styling
 - **NativeWind v4** — Tailwind CSS 클래스 기반 스타일링
-- `tailwind.config.js` — 디자인 토큰 (primary, secondary, neutral, semantic colors)
-- `constants/theme.ts` — light/dark 컬러 팔레트 및 폰트 정의
+- `tailwind.config.js` — 디자인 토큰 (primary/blue, secondary/purple, neutral, semantic colors)
 - `global.css` — Tailwind directives
-
-### Domain Structure
-```
-lib/
-├── api/          # API 클라이언트, React Query 설정
-├── auth/         # SSO (Apple/Google/Kakao), 토큰 관리
-├── ads/          # AdMob 조건부 활성화 엔진
-├── chat/         # Supabase Realtime 채팅
-├── call/         # (LiveKit) 음성 통화
-├── notification/ # Push + Local 알림
-├── subscription/ # IAP 구독 결제
-├── upload/       # 파일 업로드 (카메라/갤러리/문서)
-├── cross-domain/ # 크로스 도메인 연동 매니저
-├── stores/       # Zustand 스토어 (도메인별)
-├── types/        # TypeScript 타입 정의
-├── hooks/        # 커스텀 훅
-├── utils/        # 유틸리티 (MMKV 등)
-└── providers.tsx # 앱 프로바이더 (QueryClient, ErrorBoundary)
-
-components/
-├── layout/       # SafeArea, Container, Row, Spacer, KeyboardAwareView
-├── ui/           # Button, Input, Badge, Avatar, Card, Chip, Switch, Checkbox, Radio, Skeleton, Progress
-├── composite/    # Header, ListItem, SearchBar, EmptyState, ActionSheet
-├── feedback/     # ErrorBoundary, LoadingOverlay
-├── auth/         # SocialLoginButton, AuthGuard
-├── subscription/ # Paywall, FeatureGate
-├── ads/          # ConditionalAdBanner
-├── chat/         # MessageBubble, ChatInput
-├── call/         # CallScreen
-├── todo/         # TodoCard
-├── player/       # MiniPlayer
-└── upload/       # (file picker UI)
-```
 
 ### Cross-Domain Integration
 - 구독 활성화 → 광고 OFF, 파일 용량 무제한, 통화 시간 무제한, 오프라인 다운로드
@@ -92,7 +72,9 @@ components/
 - **Strict TypeScript**: strict 모드
 - **광고 하드코딩 금지**: `adConditionEngine`을 통해서만 광고 표시
 - **영수증 서버 검증**: IAP 영수증은 서버에서만 검증
-- **네이티브 SDK SSO**: WebView 방식 금지
+- **인증**: 이메일 로그인만 지원 (소셜 로그인 미사용)
+- **공통 타입**: `ApiResponse<T>`, `AsyncState<T>`, `PaginatedResponse<T>` — `lib/types/common.ts`
+- **Barrel exports**: `components/ui/index.ts`, `components/composite/index.ts` 등 공개 API용
 
 ## Environment Variables (.env)
 

@@ -3,7 +3,6 @@ import type {
   AuthResponse,
   SignInPayload,
   SignUpPayload,
-  SocialAuthPayload,
   User,
 } from '@/lib/types/auth';
 
@@ -14,10 +13,6 @@ export const authApi = {
 
   signIn(payload: SignInPayload) {
     return api.post<AuthResponse>('/auth/sign-in', payload);
-  },
-
-  socialSignIn(payload: SocialAuthPayload) {
-    return api.post<AuthResponse>('/auth/social', payload);
   },
 
   refreshToken(refreshToken: string) {
