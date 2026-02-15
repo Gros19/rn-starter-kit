@@ -1,7 +1,7 @@
 import { ScrollView, View } from 'react-native';
 import { SafeArea } from '@/components/layout';
 import { Text } from '@/components/ui/text';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/lib/stores/auth-store';
 import { TestIds } from '@/lib/utils/testIds';

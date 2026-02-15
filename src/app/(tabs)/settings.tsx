@@ -1,5 +1,4 @@
-import { View, Alert } from 'react-native';
-import { ScrollView } from 'react-native';
+import { View, Alert, ScrollView } from 'react-native';
 import { SafeArea } from '@/components/layout';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';

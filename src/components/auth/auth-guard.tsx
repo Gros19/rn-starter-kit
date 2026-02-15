@@ -20,7 +20,7 @@ export function AuthGuard({ children }: PropsWithChildren) {
     if (!isAuthenticated && !inAuthGroup) {
       router.replace('/(auth)/login' as Href);
     } else if (isAuthenticated && inAuthGroup) {
-      router.replace('/(tabs)');
+      router.replace('/(tabs)' as Href);
     }
   }, [isAuthenticated, isInitialized, segments, router]);
 
