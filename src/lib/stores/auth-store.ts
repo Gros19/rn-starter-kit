@@ -44,6 +44,22 @@ export const useAuthStore = create<AuthState>()(
         isInitialized: false,
 
         initialize: async () => {
+          // Dev mode: 로그인 스킵
+          if (__DEV__) {
+            set({
+              user: {
+                id: 'dev-user',
+                email: 'dev@example.com',
+                name: 'Dev User',
+                authProvider: 'email',
+                createdAt: new Date().toISOString(),
+              },
+              isAuthenticated: true,
+              isInitialized: true,
+            });
+            return;
+          }
+
           try {
             const token = await tokenService.getAccessToken();
             if (!token) {

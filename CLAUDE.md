@@ -83,3 +83,19 @@ EXPO_PUBLIC_API_BASE_URL=
 ## ESLint
 
 flat config 형식 (`eslint.config.js`), `eslint-config-expo` 확장. `dist/*` 무시.
+
+## Claude Code Ecosystem (프로젝트 레벨)
+
+### Agents
+- `.claude/agents/dev/rn-screen-developer.md` — 스크린/라우트 스캐폴딩
+- `.claude/agents/dev/rnr-component-builder.md` — RNR 컴포넌트 통합
+- `.claude/agents/dev/starter-initializer.md` — 스타터킷 초기화
+- `.claude/agents/test/maestro-flow-writer.md` — Maestro E2E 플로우 작성
+
+### Commands
+- `/test:e2e [flow-name]` — Maestro E2E 테스트 실행
+- `/dev:add-screen <path>` — 새 스크린 스캐폴딩
+
+### Hooks
+- `pre-commit-lint.sh` — 커밋 전 ESLint 자동 실행
+- `pre-push-typecheck.sh` — 푸시 전 TypeScript 타입 체크

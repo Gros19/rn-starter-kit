@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { View, Alert } from 'react-native';
-import { Link, type Href } from 'expo-router';
-import { SafeArea, KeyboardAwareView } from '@/components/layout';
-import { Text } from '@/components/ui/text';
-import { Input } from '@/components/ui/input';
+import { KeyboardAwareView, SafeArea } from '@/components/layout';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Text } from '@/components/ui/text';
 import { useAuthStore } from '@/lib/stores/auth-store';
 import { TestIds } from '@/lib/utils/testIds';
+import { Link, type Href } from 'expo-router';
+import { useState } from 'react';
+import { Alert, View } from 'react-native';
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
@@ -50,6 +50,7 @@ export default function RegisterScreen() {
                 value={name}
                 onChangeText={setName}
                 autoComplete="name"
+                autoCapitalize='none'
               />
             </View>
             <View className="gap-1.5">
