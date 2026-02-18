@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { User } from '@/lib/types/auth';
 import { tokenService } from '@/lib/auth/token-service';
 import { authApi } from '@/lib/auth/auth-api';
-import { setTokenGetter } from '@/lib/api/client';
+import { setTokenGetter, setTokenRefresher, setSignOutHandler } from '@/lib/api/client';
 import { mmkvStorage } from '@/lib/utils/storage';
 
 interface AuthState {
@@ -33,8 +33,31 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => {
       // API 클라이언트에 토큰 getter 주입
       setTokenGetter(() => {
-        // persist에서 복원된 상태 확인
         return null; // 실제 토큰은 SecureStore에서 관리
+      });
+
+      // 토큰 갱신 함수 주입
+      setTokenRefresher(async () => {
+        try {
+          const refreshToken = await tokenService.getRefreshToken();
+          if (!refreshToken) return false;
+
+          const { data, error } = await authApi.refreshToken(refreshToken);
+          if (error || !data) return false;
+
+          await tokenService.setTokens(data.accessToken, data.refreshToken);
+          setTokenGetter(() => data.accessToken);
+          return true;
+        } catch {
+          return false;
+        }
+      });
+
+      // 로그아웃 핸들러 주입
+      setSignOutHandler(async () => {
+        await tokenService.clearTokens();
+        setTokenGetter(() => null);
+        set({ user: null, isAuthenticated: false });
       });
 
       return {

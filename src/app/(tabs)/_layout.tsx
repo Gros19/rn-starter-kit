@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Home, Compass, Settings } from 'lucide-react-native';
 import { HapticTab } from '@/components/haptic-tab';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { TestIds } from '@/lib/utils/testIds';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -19,6 +20,7 @@ export default function TabLayout() {
         options={{
           title: '홈',
           tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          tabBarButtonTestID: TestIds.tabBar.homeButton,
         }}
       />
       <Tabs.Screen
@@ -26,6 +28,7 @@ export default function TabLayout() {
         options={{
           title: '탐색',
           tabBarIcon: ({ color }) => <Compass size={24} color={color} />,
+          tabBarButtonTestID: TestIds.tabBar.exploreButton,
         }}
       />
       <Tabs.Screen
@@ -33,6 +36,7 @@ export default function TabLayout() {
         options={{
           title: '설정',
           tabBarIcon: ({ color }) => <Settings size={24} color={color} />,
+          tabBarButtonTestID: TestIds.tabBar.settingsButton,
         }}
       />
     </Tabs>

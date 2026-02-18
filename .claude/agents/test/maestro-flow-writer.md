@@ -81,6 +81,25 @@ appId: ${APP_ID}
 - `clearState: true`로 깨끗한 상태에서 시작
 - 적절한 timeout 설정 (네트워크/애니메이션 대기)
 
+## Expo Go 환경 대응
+
+### appId 설정
+- Expo Go 환경: `appId: host.exp.Exponent`
+- 개발 빌드: `appId: ${APP_ID}` 또는 `maestro_detect_app_id`로 감지
+- Expo Go에서는 `launchApp` 후 프로젝트 선택 단계 필요:
+  ```yaml
+  - tapOn:
+      text: "<app.config.ts의 name 값>"  # app.config.ts에서 name 필드를 읽어 사용
+      index: 0
+      optional: true
+  ```
+
+### 텍스트 인식 주의사항
+- React Native에서 Maestro의 `text` 필드가 비어있고 `accessibilityText`에만 값이 있는 경우 빈번
+- **testID 기반 셀렉터를 최우선 사용** (`id:` 키)
+- 텍스트 매칭은 최후의 수단으로만 사용
+- `accessibilityLabel`이 설정된 경우 텍스트보다 우선 매칭됨
+
 ## 품질 체크리스트
 
 - [ ] testID가 `src/lib/utils/testIds.ts` 레지스트리에 존재하는가?
@@ -90,3 +109,5 @@ appId: ${APP_ID}
 - [ ] 실패 시나리오도 고려했는가?
 - [ ] `clearState: true`로 깨끗한 상태에서 시작하는가?
 - [ ] 파일 네이밍이 kebab-case인가?
+- [ ] 텍스트 매칭 대신 testID(`id:`) 기반 셀렉터를 사용하는가?
+- [ ] Expo Go 환경에서 프로젝트 선택 단계가 포함되었는가?
