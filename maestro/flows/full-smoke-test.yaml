@@ -1,0 +1,121 @@
+appId: host.exp.Exponent
+name: "Full Smoke Test"
+---
+
+# Expo Go 진입
+- launchApp
+- waitForAnimationToEnd
+- tapOn:
+    text: "rn-starter-kit"  # TODO: app.config.ts의 name 값과 일치시킬 것
+    index: 0
+    optional: true
+
+# 온보딩 처리 (이미 완료된 경우 스킵)
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-screen-container"
+    commands:
+      - tapOn:
+          id: "onboarding-skip-button"
+      - waitForAnimationToEnd
+
+# 홈 화면 대기
+- extendedWaitUntil:
+    visible:
+      id: "home-screen-container"
+    timeout: 60000
+- takeScreenshot: "maestro/screenshots/01-home"
+
+# 탐색 탭
+- tapOn:
+    id: "tab-bar-explore-button"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/02-explore"
+
+# 설정 탭
+- tapOn:
+    id: "tab-bar-settings-button"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/03-settings"
+
+# 홈 복귀
+- tapOn:
+    id: "tab-bar-home-button"
+- waitForAnimationToEnd
+
+# Todo
+- tapOn:
+    id: "home-todo-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/04-todo"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 파일 업로드
+- tapOn:
+    id: "home-upload-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/05-upload"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 알림
+- tapOn:
+    id: "home-notification-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/06-notification"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 게시판 (스크롤 필요)
+- scrollUntilVisible:
+    element:
+      id: "home-board-card"
+    direction: DOWN
+- tapOn:
+    id: "home-board-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/07-board"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 채팅 (스크롤 필요)
+- scrollUntilVisible:
+    element:
+      id: "home-chat-card"
+    direction: DOWN
+- tapOn:
+    id: "home-chat-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/08-chat"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 갤러리 (스크롤 필요)
+- scrollUntilVisible:
+    element:
+      id: "home-gallery-card"
+    direction: DOWN
+- tapOn:
+    id: "home-gallery-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/09-gallery"
+- tapOn:
+    id: "features-back-button"
+- waitForAnimationToEnd
+
+# 피드 (스크롤 필요)
+- scrollUntilVisible:
+    element:
+      id: "home-feed-card"
+    direction: DOWN
+- tapOn:
+    id: "home-feed-card"
+- waitForAnimationToEnd
+- takeScreenshot: "maestro/screenshots/10-feed"

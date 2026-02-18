@@ -17,11 +17,27 @@ export function setTokenGetter(getter: () => string | null) {
   getAccessToken = getter;
 }
 
+/** 토큰 갱신 함수 (auth store에서 주입) */
+let refreshTokenFn: (() => Promise<boolean>) | null = null;
+
+export function setTokenRefresher(refresher: () => Promise<boolean>) {
+  refreshTokenFn = refresher;
+}
+
+/** 로그아웃 함수 (auth store에서 주입) */
+let signOutFn: (() => Promise<void>) | null = null;
+
+export function setSignOutHandler(handler: () => Promise<void>) {
+  signOutFn = handler;
+}
+
+let isRefreshing = false;
+
 async function request<T>(
   method: RequestMethod,
   path: string,
   body?: unknown,
-  options?: RequestOptions,
+  options?: RequestOptions & { _isRetry?: boolean },
 ): Promise<ApiResponse<T>> {
   const url = new URL(path, API_BASE_URL);
   if (options?.params) {
@@ -49,6 +65,22 @@ async function request<T>(
     });
 
     const data = await response.json();
+
+    // 401 인터셉터: 토큰 갱신 시도 후 재요청
+    if (response.status === 401 && !options?._isRetry && !path.includes('/auth/refresh')) {
+      if (!isRefreshing && refreshTokenFn) {
+        isRefreshing = true;
+        const refreshed = await refreshTokenFn();
+        isRefreshing = false;
+
+        if (refreshed) {
+          return request<T>(method, path, body, { ...options, _isRetry: true });
+        }
+      }
+      // refresh 실패 시 로그아웃
+      await signOutFn?.();
+      return { data: data as T, error: 'Session expired', status: 401 };
+    }
 
     if (!response.ok) {
       return {

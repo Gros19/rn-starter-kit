@@ -1,0 +1,27 @@
+appId: host.exp.Exponent
+name: "Smoke Test - Full Screen Navigation"
+---
+
+# Expo Go에서 프로젝트 진입
+- launchApp
+- waitForAnimationToEnd
+- tapOn:
+    text: "rn-starter-kit"
+    index: 0
+
+# 온보딩 대기
+- extendedWaitUntil:
+    visible: "빠르게 시작하세요"
+    timeout: 60000
+
+# 온보딩 테스트
+- takeScreenshot: "01-onboarding-page1"
+- tapOn: "다음"
+- waitForAnimationToEnd
+- takeScreenshot: "02-onboarding-page2"
+- tapOn: "다음"
+- waitForAnimationToEnd
+- takeScreenshot: "03-onboarding-page3"
+- tapOn: "시작하기"
+- waitForAnimationToEnd
+- takeScreenshot: "04-after-onboarding"

@@ -32,16 +32,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <View className="flex-1 items-center justify-center p-6 bg-white dark:bg-neutral-950">
-          <Text className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+        <View className="flex-1 items-center justify-center p-6 bg-background">
+          <Text className="text-xl font-bold text-foreground mb-2">
             문제가 발생했습니다
           </Text>
-          <Text className="text-sm text-neutral-500 dark:text-neutral-400 text-center mb-6">
+          <Text className="text-sm text-muted-foreground text-center mb-6">
             {this.state.error.message}
           </Text>
           <TouchableOpacity
             onPress={this.reset}
-            className="bg-primary-500 px-6 py-3 rounded-xl"
+            className="bg-primary px-6 py-3 rounded-xl"
             accessibilityRole="button"
             accessibilityLabel="다시 시도"
           >

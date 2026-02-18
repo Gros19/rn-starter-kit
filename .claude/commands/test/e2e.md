@@ -22,8 +22,16 @@ $ARGUMENTS: flow 이름 (선택, 미지정시 전체 실행)
 - Maestro CLI 설치됨
 - 앱이 빌드되어 시뮬레이터에 설치됨
 
+## Expo Go 환경 대응
+
+- `maestro_detect_app_id` 실패 시 → Expo Go 환경으로 판단
+- Expo Go에서는 `appId: host.exp.Exponent` 사용
+- 플로우에 프로젝트 선택 단계 포함 필요 (`tapOn: text: "<app.config.ts의 name 값>"`)
+- 온보딩 상태 초기화가 필요한 경우: MMKV 스토리지 클리어 또는 `clearState: true` 사용
+
 ## 주의사항
 
 - 테스트 실패 시 소스코드를 수정한다 (테스트 수정은 테스트 자체의 버그인 경우만)
 - testID는 `src/lib/utils/testIds.ts` 레지스트리의 값을 사용한다
 - 각 플로우는 독립적으로 실행 가능해야 한다
+- **testID 기반 셀렉터를 텍스트 매칭보다 우선 사용한다**
